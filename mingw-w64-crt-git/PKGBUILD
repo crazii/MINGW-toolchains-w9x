@@ -1,0 +1,99 @@
+# Maintainer: Alexey Pavlov <alexpux@gmail.com>
+
+_realname=crt
+pkgbase=mingw-w64-${_realname}-git
+pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}-git"
+pkgver=11.0.0.r404.g3a137bd87
+pkgrel=1
+_commit='3a137bd87ea83d174f4a225568b75cabdbc70852'
+pkgdesc='MinGW-w64 CRT for Windows'
+arch=('any')
+mingw_arch=('mingw32' 'mingw64' 'ucrt64' 'clang64' 'clang32' 'clangarm64')
+url='https://www.mingw-w64.org/'
+msys2_repository_url="https://sourceforge.net/p/mingw-w64/mingw-w64/ci/master/tree/mingw-w64-crt/"
+license=('custom')
+groups=("${MINGW_PACKAGE_PREFIX}-toolchain")
+depends=("${MINGW_PACKAGE_PREFIX}-headers-git")
+makedepends=("git"
+             "${MINGW_PACKAGE_PREFIX}-cc"
+             "${MINGW_PACKAGE_PREFIX}-binutils"
+             "${MINGW_PACKAGE_PREFIX}-autotools")
+provides=("${MINGW_PACKAGE_PREFIX}-${_realname}")
+conflicts=("${MINGW_PACKAGE_PREFIX}-${_realname}")
+options=('!strip' '!buildflags' '!emptydirs')
+source=("mingw-w64"::"git+https://git.code.sf.net/p/mingw-w64/mingw-w64#commit=$_commit"
+        0001-Allow-to-use-bessel-and-complex-functions-without-un.patch)
+sha256sums=('SKIP'
+            'd641257f7e1469aff89adc33e57702b75fe9667ca035978f890eae1020b6814c')
+
+pkgver() {
+  cd "${srcdir}/mingw-w64"
+  git describe --long ${_commit} | sed 's/\([^-]*-g\)/r\1/;s/-/./g;s/^v//g'
+}
+
+prepare() {
+  cd ${srcdir}/mingw-w64
+
+  git apply "${srcdir}/0001-Allow-to-use-bessel-and-complex-functions-without-un.patch"
+}
+
+build() {
+  msg "Building ${MSYSTEM} CRT"
+
+  declare -a _crt_configure_args
+  case "$CARCH" in
+    i686)
+      _crt_configure_args=("--disable-lib64" "--enable-lib32")
+    ;;
+    x86_64)
+      _crt_configure_args=("--disable-lib32" "--enable-lib64")
+    ;;
+    armv7)
+      _crt_configure_args=("--disable-lib32" "--disable-lib64" "--enable-libarm32")
+    ;;
+    aarch64)
+      _crt_configure_args=("--disable-lib32" "--disable-lib64" "--disable-libarm32" "--enable-libarm64")
+    ;;
+  esac
+
+  # only clang+lld support this at the moment
+  if [[ $MINGW_PACKAGE_PREFIX == *-clang-* ]]; then
+    _crt_configure_args+=("--enable-cfguard")
+  fi
+
+  local _default_msvcrt=msvcrt
+  if [[ $MINGW_PACKAGE_PREFIX == *-clang-* ]] || [[ $MINGW_PACKAGE_PREFIX == *-ucrt-* ]]; then
+    _default_msvcrt=ucrt
+  fi
+
+  [[ -d ${srcdir}/build-${MSYSTEM} ]] && rm -rf ${srcdir}/build-${MSYSTEM}
+  mkdir -p ${srcdir}/build-${MSYSTEM} && cd ${srcdir}/build-${MSYSTEM}
+
+  ${srcdir}/mingw-w64/mingw-w64-crt/configure \
+    --prefix=${MINGW_PREFIX} \
+    --build=${MINGW_CHOST} \
+    --host=${MINGW_CHOST} \
+    --target=${MINGW_CHOST} \
+    --with-default-msvcrt=${_default_msvcrt} \
+    --enable-wildcard \
+    --disable-dependency-tracking \
+    "${_crt_configure_args[@]}"
+
+  make
+}
+
+package() {
+  msg "Installing ${MSYSTEM} crt"
+  cd ${srcdir}/build-${MSYSTEM}
+  make DESTDIR=${pkgdir} install-strip
+
+  # Create empty dummy archives, to avoid failing when the compiler driver
+  # adds -lssp -lssh_nonshared when linking.
+  ar rcs "${pkgdir}"${MINGW_PREFIX}/lib/libssp.a
+  ar rcs "${pkgdir}"${MINGW_PREFIX}/lib/libssp_nonshared.a
+
+  msg "Installing MinGW-w64 licenses"
+  install -Dm644 ${srcdir}/mingw-w64/COPYING ${pkgdir}${MINGW_PREFIX}/share/licenses/${_realname}/COPYING
+  install -Dm644 ${srcdir}/mingw-w64/COPYING.MinGW-w64/COPYING.MinGW-w64.txt ${pkgdir}${MINGW_PREFIX}/share/licenses/${_realname}/COPYING.MinGW-w64.txt
+  install -Dm644 ${srcdir}/mingw-w64/COPYING.MinGW-w64-runtime/COPYING.MinGW-w64-runtime.txt ${pkgdir}${MINGW_PREFIX}/share/licenses/${_realname}/COPYING.MinGW-w64-runtime.txt
+}
