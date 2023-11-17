@@ -3,7 +3,7 @@ MINGW toolchains for building Win9x target
 
 Build scripts copied from https://github.com/msys2/MINGW-packages and added with '-march=pentium3' flags to support legacy CPUs.
 
-# HOWTO BUBILD
+# HOWTO BUILD
 Edit /etc/makepkg_mingw.conf in mingw or "${C:\Msys64}\etc\makepkg_mingw.conf" on your host pc,
 to change 
 ```
