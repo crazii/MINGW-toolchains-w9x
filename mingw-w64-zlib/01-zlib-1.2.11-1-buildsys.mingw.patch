@@ -1,6 +1,6 @@
---- a/configure
-+++ b/configure
-@@ -38,6 +38,7 @@
+--- "a/configure"
++++ "b/configure"
+@@ -41,6 +41,7 @@ fi
  
  # destination name for static library
  STATICLIB=libz.a
@@ -8,7 +8,7 @@
  
  # extract zlib version numbers from zlib.h
  VER=`sed -n -e '/VERSION "/s/.*"\(.*\)".*/\1/p' < ${SRCDIR}zlib.h`
-@@ -74,7 +75,7 @@
+@@ -75,7 +76,7 @@ ARCHS=
  prefix=${prefix-/usr/local}
  exec_prefix=${exec_prefix-'${prefix}'}
  libdir=${libdir-'${exec_prefix}/lib'}
@@ -17,19 +17,19 @@
  includedir=${includedir-'${prefix}/include'}
  mandir=${mandir-'${prefix}/share/man'}
  shared_ext='.so'
-@@ -90,6 +91,7 @@
- sanitize=0
+@@ -92,6 +93,7 @@ address=0
+ memory=0
  old_cc="$CC"
  old_cflags="$CFLAGS"
 +old_ldflags="$LDFLAGS"
  OBJC='$(OBJZ) $(OBJG)'
  PIC_OBJC='$(PIC_OBJZ) $(PIC_OBJG)'
  
-@@ -224,12 +226,23 @@
+@@ -236,12 +238,23 @@ if test "$gcc" -eq 1 && ($cc -c $test.c) >> configure.log 2>&1; then
          LDSHARED=${LDSHARED-"$cc -shared -Wl,-soname,libz.so.1,--version-script,${SRCDIR}zlib.map"}
          LDCONFIG="ldconfig -m" ;;
    CYGWIN* | Cygwin* | cygwin* | *-cygwin* | OS/2*)
-+        CFLAGS="${CFLAGS} -D_LARGEFILE_SOURCE=1 -D_FILE_OFFSET_BITS=64"
++        CFLAGS="${CFLAGS} -D_LARGEFILE_SOURCE=0 -D_FILE_OFFSET_BITS=32"
 +        SFLAGS="${CFLAGS}"
 +        LDFLAGS="-L. ${old_ldflags}"
 +        shared_ext=".dll"
@@ -53,7 +53,7 @@
          EXE='.exe' ;;
    QNX*) # This is for QNX6. I suppose that the QNX rule below is for QNX2,QNX4
          # (alain.bonnefoy@icbt.com)
-@@ -355,11 +367,32 @@
+@@ -370,11 +383,32 @@ else
    esac
  fi
  
@@ -87,7 +87,18 @@
  echo >> configure.log
  
  # define functions for testing compiler and library characteristics and logging the results
-@@ -854,6 +887,9 @@
+@@ -522,8 +556,8 @@ cat > $test.c <<EOF
+ off64_t dummy = 0;
+ EOF
+ if try $CC -c $CFLAGS -D_LARGEFILE64_SOURCE=1 $test.c; then
+-  CFLAGS="${CFLAGS} -D_LARGEFILE64_SOURCE=1"
+-  SFLAGS="${SFLAGS} -D_LARGEFILE64_SOURCE=1"
++  CFLAGS="${CFLAGS} -D_LARGEFILE64_SOURCE=0"
++  SFLAGS="${SFLAGS} -D_LARGEFILE64_SOURCE=0"
+   ALL="${ALL} all64"
+   TEST="${TEST} test64"
+   echo "Checking for off64_t... Yes." | tee -a configure.log
+@@ -855,6 +889,9 @@ echo SHAREDLIB = $SHAREDLIB >> configure.log
  echo SHAREDLIBM = $SHAREDLIBM >> configure.log
  echo SHAREDLIBV = $SHAREDLIBV >> configure.log
  echo STATICLIB = $STATICLIB >> configure.log
@@ -97,7 +108,7 @@
  echo TEST = $TEST >> configure.log
  echo VER = $VER >> configure.log
  echo SRCDIR = $SRCDIR >> configure.log
-@@ -874,9 +910,12 @@
+@@ -875,9 +912,12 @@ sed < ${SRCDIR}Makefile.in "
  /^LDSHARED *=/s#=.*#=$LDSHARED#
  /^CPP *=/s#=.*#=$CPP#
  /^STATICLIB *=/s#=.*#=$STATICLIB#
@@ -110,7 +121,7 @@
  /^AR *=/s#=.*#=$AR#
  /^ARFLAGS *=/s#=.*#=$ARFLAGS#
  /^RANLIB *=/s#=.*#=$RANLIB#
-@@ -905,9 +944,12 @@
+@@ -906,9 +946,12 @@ sed < ${SRCDIR}zlib.pc.in "
  /^CPP *=/s#=.*#=$CPP#
  /^LDSHARED *=/s#=.*#=$LDSHARED#
  /^STATICLIB *=/s#=.*#=$STATICLIB#

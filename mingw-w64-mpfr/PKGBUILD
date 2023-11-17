@@ -38,7 +38,8 @@ build() {
     --prefix=${MINGW_PREFIX} \
     --enable-static \
     --enable-shared \
-    --with-gmp=${MINGW_PREFIX}
+    --with-gmp=${MINGW_PREFIX} \
+    --with-arch=pentium3
 
   make
 }

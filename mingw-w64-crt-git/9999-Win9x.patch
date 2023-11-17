@@ -1,0 +1,41 @@
+diff --git "a/mingw-w64-crt/crt/crtexe.c" "b/mingw-w64-crt/crt/crtexe.c"
+index 03bda59..d63b769 100644
+--- "a/mingw-w64-crt/crt/crtexe.c"
++++ "b/mingw-w64-crt/crt/crtexe.c"	
+@@ -22,7 +22,7 @@
+ #include <locale.h>
+ 
+ #if defined(__SEH__) && (!defined(__clang__) || __clang_major__ >= 7)
+-#define SEH_INLINE_ASM
++//#define SEH_INLINE_ASM
+ #endif
+ 
+ #ifndef __winitenv
+@@ -211,6 +211,7 @@ __attribute__((force_align_arg_pointer))
+ __declspec(noinline) int
+ __tmainCRTStartup (void)
+ {
++  #if 0
+     void *lock_free = NULL;
+     void *fiberid = ((PNT_TIB)NtCurrentTeb())->StackBase;
+     int nested = FALSE;
+@@ -224,6 +225,8 @@ __tmainCRTStartup (void)
+ 	  }
+ 	Sleep(1000);
+       }
++  #endif
++
+     if (__native_startup_state == __initializing)
+       {
+ 	_amsg_exit (31);
+@@ -242,8 +245,10 @@ __tmainCRTStartup (void)
+ 	__native_startup_state = __initialized;
+       }
+     _ASSERTE(__native_startup_state == __initialized);
++    #if 0
+     if (! nested)
+       (VOID)InterlockedExchangePointer ((volatile PVOID *) &__native_startup_lock, 0);
++    #endif
+     
+     if (__dyn_tls_init_callback != NULL)
+       __dyn_tls_init_callback (NULL, DLL_THREAD_ATTACH, NULL);

@@ -1,0 +1,15 @@
+--- "a/Makefile.in"
++++ "b/Makefile.in"
+@@ -146,10 +146,10 @@ minigzip.o: $(SRCDIR)test/minigzip.c $(SRCDIR)zlib.h zconf.h
+ 	$(CC) $(CFLAGS) $(ZINCOUT) -c -o $@ $(SRCDIR)test/minigzip.c
+ 
+ example64.o: $(SRCDIR)test/example.c $(SRCDIR)zlib.h zconf.h
+-	$(CC) $(CFLAGS) $(ZINCOUT) -D_FILE_OFFSET_BITS=64 -c -o $@ $(SRCDIR)test/example.c
++	$(CC) $(CFLAGS) $(ZINCOUT) -D_FILE_OFFSET_BITS=32 -c -o $@ $(SRCDIR)test/example.c
+ 
+ minigzip64.o: $(SRCDIR)test/minigzip.c $(SRCDIR)zlib.h zconf.h
+-	$(CC) $(CFLAGS) $(ZINCOUT) -D_FILE_OFFSET_BITS=64 -c -o $@ $(SRCDIR)test/minigzip.c
++	$(CC) $(CFLAGS) $(ZINCOUT) -D_FILE_OFFSET_BITS=32 -c -o $@ $(SRCDIR)test/minigzip.c
+ 
+ 
+ adler32.o: $(SRCDIR)adler32.c

@@ -69,7 +69,8 @@ build() {
     --enable-relocatable \
     --disable-rpath \
     --enable-silent-rules \
-    --enable-nls
+    --enable-nls \
+    --with-arch=pentium3
 
   make
 }

@@ -1,0 +1,14 @@
+diff --git "a/gcc/jit/jit-w32.cc" "b/gcc/jit/jit-w32.cc"
+index e13e01233..b501f82e9 100644
+--- "a/gcc/jit/jit-w32.cc"
++++ "b/gcc/jit/jit-w32.cc"	
+
+@@ -25,6 +25,8 @@ along with GCC; see the file COPYING3.  If not see
+ 
+ #include <cstdio>
+ #include <cstdint>
++#include <limits.h>
++#include <cstdlib>
+ 
+ #include "jit-w32.h"
+ 
