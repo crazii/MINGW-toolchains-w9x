@@ -1,0 +1,32 @@
+diff --git "a/mingw-w64-libraries/winpthreads/src/cond.c" "b/mingw-w64-libraries/winpthreads/src/cond.c"
+index d50f85b..a7d8ee6 100644
+--- "a/mingw-w64-libraries/winpthreads/src/cond.c"
++++ "b/mingw-w64-libraries/winpthreads/src/cond.c"
+@@ -52,6 +52,27 @@ typedef struct sCondWaitHelper {
+ 
+ int do_sema_b_wait_intern (HANDLE sema, int nointerrupt, DWORD timeout);
+ 
++
++typedef BOOL (WINAPI *PTRYENTERCRITICALSECTION)(LPCRITICAL_SECTION);
++static PTRYENTERCRITICALSECTION pTryEnterCriticalSection;
++static BOOL TryEnterCriticalSectionInit;
++BOOL TryEnterCriticalSectionWrapper(LPCRITICAL_SECTION cs)
++{
++  if(pTryEnterCriticalSection == NULL && !TryEnterCriticalSectionInit)
++  {
++    pTryEnterCriticalSection = GetProcAddress(GetModuleHandleA("kernel32.dll"),"TryEnterCriticalSection");
++    TryEnterCriticalSectionInit = TRUE;
++  }
++
++  if(pTryEnterCriticalSection)
++    return pTryEnterCriticalSection(cs);
++
++  EnterCriticalSection(cs);
++  return TRUE;
++}
++
++#define TryEnterCriticalSection TryEnterCriticalSectionWrapper
++
+ #ifdef WINPTHREAD_DBG
+ static int print_state = 0;
+ static FILE *fo;
