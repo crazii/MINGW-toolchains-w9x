@@ -1,0 +1,20 @@
+diff --git "a/mingw-w64-libraries/winpthreads/src/thread.c" "b/mingw-w64-libraries/winpthreads/src/thread.c"
+index 2eb76db..ec0b89d 100644
+--- "a/mingw-w64-libraries/winpthreads/src/thread.c"
++++ "b/mingw-w64-libraries/winpthreads/src/thread.c"
+@@ -117,6 +117,7 @@ SetThreadName (DWORD dwThreadID, LPCSTR szThreadName)
+      {
+      }
+ #else
++#if _WIN32_WINNT >= _WIN32_WINNT_WINXP
+    /* Without a debugger we *must* have an exception handler,
+     * otherwise raising an exception will crash the process.
+     */
+@@ -124,6 +125,7 @@ SetThreadName (DWORD dwThreadID, LPCSTR szThreadName)
+    if ((!IsDebuggerPresent ()) && (SetThreadName_VEH_handle == NULL))
+ #else
+    if (!IsDebuggerPresent ())
++#endif
+ #endif
+      return;
+ 

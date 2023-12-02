@@ -26,9 +26,11 @@ makedepends=("git"
              "${MINGW_PACKAGE_PREFIX}-headers-git")
 options=('!emptydirs')
 source=("mingw-w64"::"git+https://git.code.sf.net/p/mingw-w64/mingw-w64#commit=$_commit"
-        "0001-Define-__-de-register_frame_info-in-fake-libgcc_s.patch")
+        "0001-Define-__-de-register_frame_info-in-fake-libgcc_s.patch"
+        "0002-IsDebuggerPresent.patch")
 sha256sums=('SKIP'
-            'd9e8af81682d9bf70e3d87506f51156cec61260b810a234bce861cb2eb3a5919')
+            'd9e8af81682d9bf70e3d87506f51156cec61260b810a234bce861cb2eb3a5919'
+            '191A4C86ABF7AA6D82903ACED1FEF3263DE9646F0E5AA1E341B62005EED522D0')
 
 pkgver() {
   cd "${srcdir}/mingw-w64"
@@ -39,6 +41,7 @@ prepare() {
   cd "${srcdir}/mingw-w64"
   [[ -f mingw-w64-libraries/winpthreads/src/libgcc/dll_frame_info.c ]] && rm -rf mingw-w64-libraries/winpthreads/src/libgcc/dll_frame_info.c
   git apply "${srcdir}"/0001-Define-__-de-register_frame_info-in-fake-libgcc_s.patch
+  git apply "${srcdir}"/0002-IsDebuggerPresent.patch
 
   cd "${srcdir}"/mingw-w64/mingw-w64-libraries/winpthreads
   autoreconf -vfi
