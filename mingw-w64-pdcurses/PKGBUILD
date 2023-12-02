@@ -12,7 +12,7 @@ pkgver=4.3.7
 pkgrel=1
 pkgdesc="Curses library on the Win32 API (mingw-w64)"
 # ports that are available with this package
-_pdcports="wincon wingui vt"
+_pdcports="wincon"
 arch=('any')
 mingw_arch=('mingw32' 'mingw64' 'ucrt64' 'clang64' 'clang32' 'clangarm64')
 url="https://www.projectpluto.com/win32a.htm"
@@ -20,13 +20,15 @@ license=('Public Domain')
 makedepends=("${MINGW_PACKAGE_PREFIX}-cc")
 depends=("${MINGW_PACKAGE_PREFIX}-gcc-libs")
 options=('staticlibs' 'strip')
-source=(${_realname}-${pkgver}.tar.gz::"https://github.com/Bill-Gray/PDCursesMod/archive/v${pkgver}.tar.gz")
-sha256sums=('cc652f20f932ad2dd6060b0c31297fd46c633d1ac5368f2cec8af7224fe16315')
+source=(${_realname}-${pkgver}.tar.gz::"https://github.com/Bill-Gray/PDCursesMod/archive/v${pkgver}.tar.gz"
+        "000-patchNT.patch")
+sha256sums=('cc652f20f932ad2dd6060b0c31297fd46c633d1ac5368f2cec8af7224fe16315'
+            '8D3F403B7BC15252F791FBF337B6F07CDFC6579D591709758352A9EDB3A0058F')
 
-#prepare() {
-#  cd PDCursesMod-${pkgver}
-#  patch -p1 -i ${srcdir}/001-mingw-pdcurses-4.3.x-build.patch
-#}
+prepare() {
+   cd PDCursesMod-${pkgver}
+   patch -p1 -i "${srcdir}"/000-patchNT.patch
+}
 
 build() {
   cd "${srcdir}/PDCursesMod-${pkgver}"
@@ -39,8 +41,8 @@ build() {
         AR=${MINGW_PREFIX}/bin/ar \
         LIBNAME=libpdcurses.dll \
         DLLNAME=libpdcurses \
-        WIDE=Y \
-        UTF8=Y \
+        WIDE=N \
+        UTF8=N \
         DLL=Y
 
     cp -rf ${pdc_port} ${pdc_port}-static-${MSYSTEM}
@@ -49,8 +51,8 @@ build() {
         STRIP=${MINGW_PREFIX}/bin/strip \
         AR=${MINGW_PREFIX}/bin/ar \
         LIBNAME=libpdcurses \
-        WIDE=Y \
-        UTF8=Y
+        WIDE=N \
+        UTF8=N
   done
 }
 
@@ -67,8 +69,8 @@ check() {
         AR=${MINGW_PREFIX}/bin/ar \
         LIBNAME=libpdcurses.dll \
         DLLNAME=libpdcurses \
-        WIDE=Y \
-        UTF8=Y \
+        WIDE=N \
+        UTF8=N \
         DLL=Y \
         demos
 
@@ -78,8 +80,8 @@ check() {
         STRIP=${MINGW_PREFIX}/bin/strip \
         AR=${MINGW_PREFIX}/bin/ar \
         LIBNAME=libpdcurses \
-        WIDE=Y \
-        UTF8=Y \
+        WIDE=N \
+        UTF8=N \
         demos
   done
 }
@@ -94,17 +96,17 @@ package() {
   #install "wingui-shared-${MSYSTEM}/*.exe ${pkgdir}${MINGW_PREFIX}/bin/
 
   # install dll and shared library of the "default port" (as in earlier versions of this package: wingui)
-  install "wingui-shared-${MSYSTEM}/libpdcurses.dll" "${pkgdir}${MINGW_PREFIX}/bin/"
-  install "wingui-static-${MSYSTEM}/libpdcurses.a"   "${pkgdir}${MINGW_PREFIX}/lib/"
+  install "wincon-shared-${MSYSTEM}/libpdcurses.dll" "${pkgdir}${MINGW_PREFIX}/bin/"
+  install "wincon-static-${MSYSTEM}/libpdcurses.a"   "${pkgdir}${MINGW_PREFIX}/lib/"
 
   # as all share the same ABI and the binaries are intended to work only with the basename - only install one link library
-  install "wingui-shared-${MSYSTEM}/libpdcurses.dll.a" "${pkgdir}${MINGW_PREFIX}/lib/"
+  #install "wingui-shared-${MSYSTEM}/libpdcurses.dll.a" "${pkgdir}${MINGW_PREFIX}/lib/"
 
   # the additional static libraries and actual dll's go in with a rename
-  for pdc_port in ${_pdcports}; do
-    install "${pdc_port}-static-${MSYSTEM}/libpdcurses.a"   "${pkgdir}${MINGW_PREFIX}/lib/libpdcurses_${pdc_port}.a"
-    install "${pdc_port}-shared-${MSYSTEM}/libpdcurses.dll" "${pkgdir}${MINGW_PREFIX}/bin/libpdcurses_${pdc_port}.dll"
-  done
+  #for pdc_port in ${_pdcports}; do
+  #  install "${pdc_port}-static-${MSYSTEM}/libpdcurses.a"   "${pkgdir}${MINGW_PREFIX}/lib/libpdcurses_${pdc_port}.a"
+  #  install "${pdc_port}-shared-${MSYSTEM}/libpdcurses.dll" "${pkgdir}${MINGW_PREFIX}/bin/libpdcurses_${pdc_port}.dll"
+  #done
 
   install -m 0644 curses.h panel.h term.h ${pkgdir}${MINGW_PREFIX}/include/pdcurses/
   # needs defines matching the make step, see https://github.com/Bill-Gray/PDCursesMod/issues/133

@@ -1,0 +1,32 @@
+diff --git "a/wincon/pdcutil.c" "b/wincon/pdcutil.c"
+index 499afa1..6031868 100644
+--- "a/wincon/pdcutil.c"
++++ "b/wincon/pdcutil.c"
+@@ -8,6 +8,7 @@
+ 
+ static volatile int _beep_count = 0;
+ 
++#if _WIN32_WINNT >= _WIN32_WINNT_WIN2K
+ static void beep_thread(LPVOID lpParameter)
+ {
+     INTENTIONALLY_UNUSED_PARAMETER( lpParameter);
+@@ -18,6 +19,7 @@ static void beep_thread(LPVOID lpParameter)
+         _beep_count--;
+     }
+ }
++#endif
+ 
+ void PDC_beep(void)
+ {
+@@ -25,7 +27,11 @@ void PDC_beep(void)
+ 
+     _beep_count++;
+     if( _beep_count == 1)
++    {
++#if _WIN32_WINNT >= _WIN32_WINNT_WIN2K   
+         _beginthread( beep_thread, 0, NULL);
++#endif
++    }
+ }
+ 
+ void PDC_napms(int ms)
