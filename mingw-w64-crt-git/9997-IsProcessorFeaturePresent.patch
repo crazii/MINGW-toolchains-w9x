@@ -1,0 +1,28 @@
+diff --git "a/mingw-w64-crt/ssp/chk_fail.c" "b/mingw-w64-crt/ssp/chk_fail.c"
+index b577219..43d2418 100644
+--- "a/mingw-w64-crt/ssp/chk_fail.c"
++++ "b/mingw-w64-crt/ssp/chk_fail.c"
+@@ -9,6 +9,8 @@
+ #include <stdlib.h>
+ #include <windows.h>
+ 
++#define IsProcessorFeaturePresent(...) FALSE //hack
++
+ void __cdecl __attribute__((__noreturn__)) __chk_fail(void);
+ 
+ void __cdecl __attribute__((__noreturn__)) __chk_fail(void) {
+
+
+diff --git "a/mingw-w64-crt/ssp/stack_chk_fail.c" "b/mingw-w64-crt/ssp/stack_chk_fail.c"
+index 5619dd8..2efcd1e 100644
+--- "a/mingw-w64-crt/ssp/stack_chk_fail.c"
++++ "b/mingw-w64-crt/ssp/stack_chk_fail.c"
+@@ -9,6 +9,8 @@
+ #include <stdlib.h>
+ #include <windows.h>
+ 
++#define IsProcessorFeaturePresent(...) FALSE //hack
++
+ void __cdecl __attribute__((__noreturn__)) __stack_chk_fail(void);
+ 
+ void __cdecl __attribute__((__noreturn__)) __stack_chk_fail(void) {
