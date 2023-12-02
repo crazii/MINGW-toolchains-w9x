@@ -17,7 +17,7 @@ CXXFLAGS="-march=pentium3 -mtune=generic -O2 -pipe"
 ```
 in ```elif [[ "$MSYSTEM" == "MINGW32" ]]; then``` branch.
 
-or chanage to -march=pentium for win95/NT targets.
+or change to -march=pentium for win95/NT targets.
 
 In mingw32/64,
 run
