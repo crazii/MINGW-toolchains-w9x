@@ -1,8 +1,8 @@
 diff --git a/gcc/diagnostic-color.cc b/gcc/diagnostic-color.cc
-index 640adfad5..f5eaf142a 100644
+index 5f2856d..fe2b05c 100644
 --- a/gcc/diagnostic-color.cc
 +++ b/gcc/diagnostic-color.cc
-@@ -211,9 +211,38 @@ should_colorize (void)
+@@ -214,9 +214,40 @@ should_colorize (void)
    HANDLE h;
    DWORD m;
  
@@ -12,6 +12,7 @@ index 640adfad5..f5eaf142a 100644
 +  ret = (h != INVALID_HANDLE_VALUE) && (h != NULL)
  	  && GetConsoleMode (h, &m);
 +
++#if (_WIN32_WINNT >= 0x0600)
 +  if (!ret)
 +    {
 +      ULONG size = sizeof (FILE_NAME_INFO) + (MAX_PATH * sizeof (wchar_t));
@@ -38,6 +39,7 @@ index 640adfad5..f5eaf142a 100644
 +        }
 +      free (fni);
 +    }
++#endif
 +  return ret;
  #else
    char const *t = getenv ("TERM");
