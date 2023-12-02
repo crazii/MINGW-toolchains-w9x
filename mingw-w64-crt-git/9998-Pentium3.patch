@@ -7,7 +7,7 @@ index 89efc48..9779d44 100644
  AM_CXXFLAGS=@ADD_C_CXX_WARNING_FLAGS@ @ADD_CXX_ONLY_WARNING_FLAGS@
  CPPFLAGSARM32=-mfpu=vfpv3
 -CPPFLAGS32=-m32 -masm=att
-+CPPFLAGS32=-m32 -masm=att -march=pentium3
++CPPFLAGS32=-m32 -masm=att -march=pentium
  CPPFLAGS64=-m64 -masm=att
  AM_DLLTOOLFLAGS=-k --as=$(AS) --output-lib $@
  DLLTOOLFLAGSARM32=-m arm
@@ -21,7 +21,7 @@ index 9fcefe4..06f914c 100644
  AM_CXXFLAGS = @ADD_C_CXX_WARNING_FLAGS@ @ADD_CXX_ONLY_WARNING_FLAGS@
  CPPFLAGSARM32 = -mfpu=vfpv3
 -CPPFLAGS32 = -m32 -masm=att
-+CPPFLAGS32 = -m32 -masm=att -march=pentium3
++CPPFLAGS32 = -m32 -masm=att -march=pentium
  CPPFLAGS64 = -m64 -masm=att
  AM_DLLTOOLFLAGS = -k --as=$(AS) --output-lib $@ $(am__append_1) \
  	$(am__append_2)
